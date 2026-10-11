@@ -40,11 +40,11 @@
         showBanner: showBanner,
       };
 
-      // Render at 1 pixel per CSS pixel instead of the display's devicePixelRatio. On a 4K / 150%-scaled
-      // screen the default renders 2-4x as many pixels through bloom, lighting and colour grading, which
-      // is the main GPU cost. Add ?scale=0.75 (or 0.5) to the URL for weaker machines, ?scale=2 for sharper.
+      // Render at the screen's real pixel density so text and UI are sharp, capped at 2x so 4K/HiDPI
+      // screens don't render 9-16x the pixels through bloom and lighting. Override with ?scale=1 (faster,
+      // softer text on HiDPI screens), ?scale=0.75 for weak machines, or ?scale=2 for maximum sharpness.
       var scale = parseFloat(new URLSearchParams(window.location.search).get("scale"));
-      config.devicePixelRatio = (scale > 0 && scale <= 4) ? scale : 1;
+      config.devicePixelRatio = (scale > 0 && scale <= 4) ? scale : Math.min(window.devicePixelRatio || 1, 2);
 
       var script = document.createElement("script");
       script.src = buildUrl + "/ppg.loader.js";
